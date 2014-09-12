@@ -37,8 +37,8 @@ A geojson schema for validating data using prismatic schema.
 
 ## Caveats
 
-A Coordiante Refference System can be specified, but the format is not verified by this schema.
-Similarly, the crs is supposed to only be defined on the base object and not any constituent 
+A Coordinate Reference System (CRS) can be specified, but the format is not verified by this schema.
+Similarly, the CRS is supposed to only be defined on the base object and not any constituent 
 elements, but this is not enforced by the current schema.
 
 ## License
