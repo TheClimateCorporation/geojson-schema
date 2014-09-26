@@ -110,9 +110,9 @@
           (optional-key :id) (maybe Any)}))
 
 (def FeatureCollection
-  (merge {(required-key :features) [Feature]
-          (required-key :type) (eq "FeatureCollection")}
-         geojson-base))
+  (merge geojson-base
+         {(required-key :features) [Feature]
+          (required-key :type) (eq "FeatureCollection")}))
 
 (def GeoJSON (either Geometry
                      GeometryCollection
