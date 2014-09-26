@@ -22,8 +22,8 @@
 
 (def MultiPoint
   (merge geojson-base
-         {(required-key :coordinates) [position]
-          (required-key :type) (eq "MultiPoint")}))
+         {:coordinates [position]
+          :type (eq "MultiPoint")}))
 
 (def ^:private linear-string-coordinates
   [(one position "first")
@@ -32,8 +32,8 @@
 
 (def LineString
   (merge geojson-base
-         {(required-key :coordinates) linear-string-coordinates
-          (required-key :type) (eq "LineString")}))
+         {:coordinates linear-string-coordinates
+          :type (eq "LineString")}))
 
 
 ;; Linear Ring
@@ -68,26 +68,26 @@
 
 (def LinearRing
   (merge geojson-base
-         {(required-key :coordinates) linear-ring-coordinates
-          (required-key :type) (eq "LineString")}))
+         {:coordinates linear-ring-coordinates
+          :type (eq "LineString")}))
 
 (def MultiLineString
   (merge geojson-base
-         {(required-key :coordinates) [linear-string-coordinates]
-          (required-key :type) (eq "MultiLineString")}))
+         {:coordinates [linear-string-coordinates]
+          :type (eq "MultiLineString")}))
 
 (def ^:private polygon-coords
   [linear-ring-coordinates])
 
 (def Polygon
   (merge geojson-base
-         {(required-key :coordinates) polygon-coords
-          (required-key :type) (eq "Polygon")}))
+         {:coordinates polygon-coords
+          :type (eq "Polygon")}))
 
 (def MultiPolygon
   (merge geojson-base
-         {(required-key :coordinates) [polygon-coords]
-          (required-key :type) (eq "MultiPolygon")}))
+         {:coordinates [polygon-coords]
+          :type (eq "MultiPolygon")}))
 
 (def Geometry
   (either Point
@@ -99,20 +99,20 @@
 
 (def GeometryCollection
   (merge geojson-base
-         {(required-key :geometries) [Geometry]
-          (required-key :type) (eq "GeometryCollection")}))
+         {:geometries [Geometry]
+          :type (eq "GeometryCollection")}))
 
 (def Feature
   (merge geojson-base
-         {(required-key :geometry) Geometry
-          (required-key :type) (eq "Feature")
-          (required-key :properties) (maybe Any)
+         {:geometry Geometry
+          :type (eq "Feature")
+          :properties (maybe Any)
           (optional-key :id) (maybe Any)}))
 
 (def FeatureCollection
   (merge geojson-base
-         {(required-key :features) [Feature]
-          (required-key :type) (eq "FeatureCollection")}))
+         {:features [Feature]
+          :type (eq "FeatureCollection")}))
 
 (def GeoJSON (either Geometry
                      GeometryCollection
