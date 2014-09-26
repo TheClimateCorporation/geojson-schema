@@ -2,9 +2,8 @@
   (:require [clojure.java.io :refer [resource file]]
             [cheshire.core :as json]
             [geojson-schema.core :as schema]
-            [schema.core :refer [validate]])
-  (:use
-   [clojure.test]))
+            [schema.core :refer [validate]]
+            [clojure.test :refer :all]))
 
 
 ;Geojson spec
