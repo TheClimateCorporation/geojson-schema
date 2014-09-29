@@ -59,45 +59,39 @@
                                    :coordinates [[101.0 1.0]]}))))
 
 ;; LinearRing
-(def linear-ring
-  {:type "LineString"
-   :coordinates [[100.0 0.0]
-                 [101.0 1.0]
-                 [101.4 203.0]
-                 [100.0 0.0]]})
-
 (deftest linear-rings-schema
-  (is (validate schema/LinearRing linear-ring)))
-
-(def not-closed-linear-ring
-  {:type "LineString"
-   :coordinates [[100.0 0.0]
-                 [101.0 1.0]
-                 [101.4 203.0]
-                 [101.5 0.0]
-                 [103.0 401.0]]})
+  (let [linear-ring {:type "LineString"
+                     :coordinates [[100.0 0.0]
+                                   [101.0 1.0]
+                                   [101.4 203.0]
+                                   [100.0 0.0]]}]
+    (is (validate schema/LinearRing linear-ring))))
 
 (deftest linear-rings-are-closed
-  (is (thrown-with-msg? Exception
-                        #"Value does not match schema"
-                        (validate schema/LinearRing
-                                  not-closed-linear-ring))))
+  (let [not-closed-linear-ring {:type "LineString"
+                                :coordinates [[100.0 0.0]
+                                              [101.0 1.0]
+                                              [101.4 203.0]
+                                              [101.5 0.0]
+                                              [103.0 401.0]]}]
+    (is (thrown-with-msg? Exception
+                          #"Value does not match schema"
+                          (validate schema/LinearRing
+                                    not-closed-linear-ring)))))
 
 ;;; Line has too few coordinates, just leaves a point and
 ;;; returns. Has no area
-(def one-dimensional-line-segment
-  {:type "LineString"
-   :coordinates [[100.0 0.0]
-                 [101.0 1.0]
-                 [100.0 0.0]]})
-
 (deftest linear-rings-have-area
+  (let [one-dimensional-line-segment {:type "LineString"
+                                      :coordinates [[100.0 0.0]
+                                                    [101.0 1.0]
+                                                    [100.0 0.0]]}]
   (is (thrown-with-msg? Exception
                         #"Value does not match schema"
                         (validate schema/LinearRing
-                                  one-dimensional-line-segment))))
+                                  one-dimensional-line-segment)))))
 
-;;; All Linear Rings should be_a LineString
+;;; All Linear Rings should be a LineString
 
 (deftest linear-rings-are-line-strings
   (is (validate schema/LineString linear-ring)))
@@ -126,5 +120,6 @@
 
 ;; FeatureCollection
 (deftest featurecollection-is-valid
-  (is (validate schema/FeatureCollection (load-example "featurecollection.geojson")))
-  (is (validate schema/GeoJSON (load-example "featurecollection.geojson"))))
+  (let [feature-collection (load-example "featurecollection.geojson")]
+    (is (validate schema/FeatureCollection feature-collection))
+    (is (validate schema/GeoJSON (load-example feature-collection)))))
