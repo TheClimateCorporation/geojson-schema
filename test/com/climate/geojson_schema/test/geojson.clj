@@ -41,7 +41,6 @@
 (deftest supports-boundingbox
   (check-all-spec-examples (fn [geojson] (validate schema/GeoJSON (add-bbox-to-geojson geojson)))))
 
-
 ;; Converts file from relative string location to Map of example
 (defn load-example
   [path]
@@ -62,7 +61,6 @@
                         (validate schema/LineString
                                   {:type "LineString"
                                    :coordinates [[101.0 1.0]]}))))
-
 
 ;; LinearRing
 (def linear-ring
@@ -108,12 +106,9 @@
 (deftest linear-rings-are-line-strings
   (is (validate schema/LineString linear-ring)))
 
-
 ;; MultiLineString
-
 (deftest multiline-strings
   (is (validate schema/MultiLineString (load-example "multiline_string.geojson"))))
-
 
 ;; Polygon
 (deftest polygons-are-valid
@@ -124,15 +119,12 @@
 (deftest multipolygon-is-valid
   (is (validate schema/MultiPolygon (load-example "multipolygon.geojson"))))
 
-
 ;; GeometryCollection
-
 (deftest geometrycollection-is-valid
   (is (validate schema/GeometryCollection
                 (load-example "geometrycollection.geojson"))))
 
 ;; Feature
-
 (deftest feature-is-valid
   (is (validate schema/Feature (load-example "feature.geojson"))))
 
