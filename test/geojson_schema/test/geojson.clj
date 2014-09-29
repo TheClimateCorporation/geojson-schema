@@ -9,48 +9,52 @@
 ;Geojson spec
 
 ;;;We validate all of the provided geojson spec examples are valid
-(def geojson-examples
-  (map (comp file resource #(str "geojson_examples/" %))
-       ["feature.geojson"
-        "featurecollection.geojson"
-        "geometrycollection.geojson"
-        "linestring.geojson"
-        "multiline_string.geojson"
-        "multipoint.geojson"
-        "multipolygon.geojson"
-        "point.geojson"
-        "polygon_holes.geojson"
-        "polygon_noholes.geojson"]))
+(def all-geojson-examples
+  (->>  "geojson_examples"
+    (resource)
+    (file)
+    (file-seq)
+    (remove #(.isDirectory %))))
 
-(deftest all-spec-examples-are-valid
-  (doseq [example geojson-examples]
+(defn check-all-spec-examples [test]
+  (doseq [example all-geojson-examples]
     (let [body (slurp example)
           geojson (json/parse-string body true)]
-      (is (validate schema/GeoJSON  geojson) (str example)))))
+        (is (test geojson) (str example)))))
+
+(deftest examples-are-valid-geojson
+  (check-all-spec-examples (fn [geojson] (validate schema/GeoJSON geojson))))
+
+;;; All examples are valid after adding crs
+(defn add-crs-to-geojson
+  [geojson]
+  (assoc geojson :crs {:type "something" :properties {}}))
 
 (deftest supports-crs
-  (doseq [example geojson-examples]
-    (let [body (slurp example)
-          geojson (json/parse-string body true)
-          crx-geojson (assoc geojson :crs {:type "something" :properties {}})]
-      (is (validate schema/GeoJSON crx-geojson)))))
+  (check-all-spec-examples (fn [geojson] (validate schema/GeoJSON (add-crs-to-geojson geojson)))))
 
+;;; All examples are valid after adding bbox
+(defn add-bbox-to-geojson
+  [geojson]
+  (assoc geojson :bbox [-180.0 200.0 100.10]))
 
 (deftest supports-boundingbox
-  (doseq [example geojson-examples]
-    (let [body (slurp example)
-          geojson (json/parse-string body true)
-          bbox-geojson (assoc geojson :bbox [-180.0 200.0 100.10])]
-      (is (validate schema/GeoJSON bbox-geojson)))))
+  (check-all-spec-examples (fn [geojson] (validate schema/GeoJSON (add-bbox-to-geojson geojson)))))
+
+
+;; Converts file from relative string location to Map of example
+(defn load-example
+  [path]
+  (as-> path ?
+       (str "geojson_examples/" ?)
+       (resource ?)
+       (file ?)
+       (slurp ?)
+       (json/parse-string ? true)))
 
 ;; LineString
-(def line-string
-  {:type "LineString"
-   :coordinates [[100.0 0.0] [101.0 1.0]]})
-
-
 (deftest line-strings-schema
-  (is (validate schema/LineString line-string)))
+  (is (validate schema/LineString (load-example "linestring.geojson"))))
 
 (deftest linestring-need-two-coords
   (is (thrown-with-msg? Exception
@@ -106,80 +110,33 @@
 
 
 ;; MultiLineString
-(def multiline
-  {:type "MultiLineString"
-   :coordinates [[[100.0 0.0] [101.0 1.0]]
-                 [[102.0 2.0] [103.0 3.0]]]})
 
 (deftest multiline-strings
-  (is (validate schema/MultiLineString multiline)))
+  (is (validate schema/MultiLineString (load-example "multiline_string.geojson"))))
 
 
 ;; Polygon
-(def polygon-noholes
-  {:type "Polygon"
-   :coordinates [[[100.0 0.0] [101.0 0.0] [101.0 1.0] [100.0 1.0] [100.0 0.0]]]})
-
-(def polygon-holes
-  {:type "Polygon"
-   :coordinates [[[100.0 0.0] [101.0 0.0] [101.0 1.0] [100.0 1.0] [100.0 0.0]]
-                 [[100.2 0.2] [100.8 0.2] [100.8 0.8] [100.2 0.8] [100.2 0.2]]]})
-
 (deftest polygons-are-valid
-  (is (validate schema/Polygon polygon-noholes))
-  (is (validate schema/Polygon polygon-holes)))
+  (is (validate schema/Polygon (load-example "polygon_noholes.geojson")))
+  (is (validate schema/Polygon (load-example "polygon_holes.geojson"))))
 
 ;; MultiPolygon
-(def multipolygon
-  {:type "MultiPolygon"
-   :coordinates [[[[102.0 2.0] [103.0 2.0] [103.0 3.0] [102.0 3.0] [102.0 2.0]]]
-                 [[[100.0 0.0] [101.0 0.0] [101.0 1.0] [100.0 1.0] [100.0 0.0]]
-                  [[100.2 0.2] [100.8 0.2] [100.8 0.8] [100.2 0.8] [100.2 0.2]]]]})
-
 (deftest multipolygon-is-valid
-  (is (validate schema/MultiPolygon multipolygon)))
+  (is (validate schema/MultiPolygon (load-example "multipolygon.geojson"))))
 
 
 ;; GeometryCollection
-(def geometry-collection
-  {:type "GeometryCollection"
-   :geometries [{:type "Point"
-                 :coordinates [100.0 0.0]}
-                {:type "LineString"
-                 :coordinates [[101.0 0.0] [102.0 1.0]]}]})
 
 (deftest geometrycollection-is-valid
   (is (validate schema/GeometryCollection
-                geometry-collection)))
+                (load-example "geometrycollection.geojson"))))
 
 ;; Feature
-(def feature
-  {:type "Feature"
-   :geometry {:type "LineString"
-              :coordinates [[102.0 0.0] [103.0 1.0] [104.0 0.0] [105.0 1.0]]}
-   :properties {:prop0 "value0"
-                :prop1 0.0}})
 
 (deftest feature-is-valid
-  (is (validate schema/Feature feature)))
+  (is (validate schema/Feature (load-example "feature.geojson"))))
 
 ;; FeatureCollection
-(def feature-collection
-  {:type "FeatureCollection"
-   :features [{:type "Feature"
-               :geometry {:type "Point"
-                          :coordinates [102.0 0.5]}
-               :properties {:prop0 "value0"}}
-              {:type "Feature"
-               :geometry {:type "LineString"
-                          :coordinates [[102.0 0.0] [103.0 1.0] [104.0 0.0] [105.0 1.0]]}
-               :properties {:prop0 "value0" :prop1 0.0}}
-              {:type "Feature"
-               :geometry {:type "Polygon"
-                          :coordinates [[[100.0 0.0] [101.0 0.0] [101.0 1.0] [100.0 1.0] [100.0 0.0]]]}
-               :properties {:prop0 "value0"
-                            :prop1 {:this "that"}}}]})
-
 (deftest featurecollection-is-valid
-  (is (validate schema/FeatureCollection feature-collection))
-  (is (validate schema/GeoJSON feature-collection)))
+  (is (validate schema/FeatureCollection (load-example "featurecollection.geojson")))
+  (is (validate schema/GeoJSON (load-example "featurecollection.geojson"))))
