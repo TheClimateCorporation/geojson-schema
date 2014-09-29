@@ -37,15 +37,15 @@
 (deftest supports-boundingbox
   (check-all-spec-examples (fn [geojson] (validate schema/GeoJSON (add-bbox-to-geojson geojson)))))
 
-;; Converts file from relative string location to Map of example
+
 (defn load-example
+  "Loads resource located at path (in geojson_examples) and converts to map"
   [path]
-  (as-> path ?
-       (str "geojson_examples/" ?)
-       (resource ?)
-       (file ?)
-       (slurp ?)
-       (json/parse-string ? true)))
+  (-> (str "geojson_examples/" path)
+      resource
+      file
+      slurp
+      (json/parse-string  true)))
 
 ;; LineString
 (deftest line-strings-schema
