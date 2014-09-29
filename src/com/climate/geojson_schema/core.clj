@@ -10,7 +10,6 @@
 
 (def ^:private position [Number])
 
-
 (def ^:private geojson-base
   {(optional-key :crs) geojson-crs
    (optional-key :bbox) [Number]})
@@ -34,7 +33,6 @@
   (merge geojson-base
          {:coordinates linear-string-coordinates
           :type (eq "LineString")}))
-
 
 ;; Linear Ring
 ;;;A Linear ring is a closed loop, so it must have
