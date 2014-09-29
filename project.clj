@@ -1,4 +1,4 @@
-(defproject geojson-schema "0.1.0-SNAPSHOT"
+(defproject geojson-schema "0.1.1"
   :description "A Geojson validator using prismatic schema"
   :url "https://github.com/TheClimateCorporation/geojson-schema"
   :license {:name "Apache 2.0 License"
