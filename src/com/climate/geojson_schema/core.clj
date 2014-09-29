@@ -1,4 +1,4 @@
-(ns geojson-schema.core
+(ns com.climate.geojson-schema.core
   (:require
     [schema.core :refer [Any optional-key required-key eq one pred both either maybe]]))
 
