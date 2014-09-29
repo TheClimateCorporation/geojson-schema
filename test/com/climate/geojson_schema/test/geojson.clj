@@ -119,4 +119,4 @@
 (deftest featurecollection-is-valid
   (let [feature-collection (load-example "featurecollection.geojson")]
     (is (validate schema/FeatureCollection feature-collection))
-    (is (validate schema/GeoJSON (load-example feature-collection)))))
+    (is (validate schema/GeoJSON feature-collection))))
