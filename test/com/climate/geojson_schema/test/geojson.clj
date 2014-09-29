@@ -65,7 +65,9 @@
                                    [101.0 1.0]
                                    [101.4 203.0]
                                    [100.0 0.0]]}]
-    (is (validate schema/LinearRing linear-ring))))
+    (is (validate schema/LinearRing linear-ring))
+    (is (validate schema/LineString linear-ring)
+        "Linear Rings should also be Line Strings")))
 
 (deftest linear-rings-are-closed
   (let [not-closed-linear-ring {:type "LineString"
@@ -90,11 +92,6 @@
                         #"Value does not match schema"
                         (validate schema/LinearRing
                                   one-dimensional-line-segment)))))
-
-;;; All Linear Rings should be a LineString
-
-(deftest linear-rings-are-line-strings
-  (is (validate schema/LineString linear-ring)))
 
 ;; MultiLineString
 (deftest multiline-strings
