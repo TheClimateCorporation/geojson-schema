@@ -5,30 +5,26 @@
             [schema.core :refer [validate]]
             [clojure.test :refer :all]))
 
-
-;Geojson spec
-
 ;;;We validate all of the provided geojson spec examples are valid
 (def all-geojson-examples
-  (->>  "geojson_examples"
-    (resource)
-    (file)
-    (file-seq)
-    (remove #(.isDirectory %))))
+  (->>  (resource "geojson_examples")
+        file
+        file-seq
+        (remove #(.isDirectory %))))
 
 (defn check-all-spec-examples [test]
-  (doseq [example all-geojson-examples]
-    (let [body (slurp example)
+  (doseq [file-path all-geojson-examples]
+    (let [body (slurp file-path)
           geojson (json/parse-string body true)]
-        (is (test geojson) (str example)))))
+        (is (test geojson) (str file-path)))))
 
 (deftest examples-are-valid-geojson
-  (check-all-spec-examples (fn [geojson] (validate schema/GeoJSON geojson))))
+  (check-all-spec-examples #(validate schema/GeoJSON %)))
 
 ;;; All examples are valid after adding crs
 (defn add-crs-to-geojson
   [geojson]
-  (assoc geojson :crs {:type "something" :properties {}}))
+  (assoc geojson :crs {:type "name" :properties {:name "urn:ogc:def:crs:OGC:1.3:CRS84"}}))
 
 (deftest supports-crs
   (check-all-spec-examples (fn [geojson] (validate schema/GeoJSON (add-crs-to-geojson geojson)))))
