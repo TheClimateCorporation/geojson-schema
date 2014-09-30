@@ -6,7 +6,7 @@ A geojson schema for validating data using prismatic schema.
 
 
 ```clojure
-(require '[geojson-schema.core :refer [MultiPolygon Geojson]]); nil
+(require '[com.climate.geojson-schema.core :refer [MultiPolygon GeoJSON]]); nil
 (require '[schema.core :as s]); nil
 (def multipolygon-example
   {:type "MultiPolygon", 
@@ -30,7 +30,7 @@ A geojson schema for validating data using prismatic schema.
 
 
 ;;But it's still valid Geojson
-(s/validate Geojson not-really-a-multipolygon)
+(s/validate GeoJSON not-really-a-multipolygon)
 ; => {:coordinates [100.0 0.0], :type "Point"}
 
 ```
