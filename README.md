@@ -1,5 +1,9 @@
 # geojson-schema
 
+[![Clojars Project](http://clojars.org/com.climate/geojson-schema/latest-version.svg)](http://clojars.org/com.climate/geojson-schema)
+
+[![Build Status](https://travis-ci.org/TheClimateCorporation/geojson-schema.svg?branch=master)](https://travis-ci.org/TheClimateCorporation/geojson-schema)
+
 A geojson schema for validating data using prismatic schema.
 
 ## Usage
