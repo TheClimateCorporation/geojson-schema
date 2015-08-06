@@ -18,6 +18,6 @@
   :license {:name "Apache 2.0 License"
             :url "http://opensource.org/licenses/Apache-2.0"}
   :dependencies [[org.clojure/clojure "1.6.0"]
-                 [prismatic/schema "0.3.0"]]
-  :profiles {:test {:dependencies [[cheshire "5.3.1"]]
+                 [prismatic/schema "0.4.3"]]
+  :profiles {:test {:dependencies [[cheshire "5.5.0"]]
                     :resource-paths ["resources" "test-resources"]}})
