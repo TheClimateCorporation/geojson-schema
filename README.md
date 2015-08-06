@@ -4,6 +4,8 @@
 
 [![Build Status](https://travis-ci.org/TheClimateCorporation/geojson-schema.svg?branch=master)](https://travis-ci.org/TheClimateCorporation/geojson-schema)
 
+[![Dependencies Status](http://jarkeeper.com/TheClimateCorporation/geojson-schema/status.png)](http://jarkeeper.com/TheClimateCorporation/geojson-schema)
+
 A geojson schema for validating data using prismatic schema.
 
 ## Usage
