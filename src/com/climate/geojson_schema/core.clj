@@ -15,11 +15,24 @@
   (:require
     [schema.core :refer [Any optional-key required-key eq one pred both either maybe]]))
 
+(def ^:private named-crs
+  {:type (eq "name")
+   :properties {:name String
+                Any Any}
+   Any Any})
+
+(def ^:private linked-crs
+  {:type (eq "link")
+   :properties {:href String
+                (optional-key :type) String
+                Any Any}
+   Any Any})
+
 ;;TBD, there's a requirement that a CRS not be overridden on a sub object per the spec.
 ;; Not sure how to implement that yet.
 (def ^:private geojson-crs
-  {:type String
-   :properties (maybe {Any Any})})
+  (either named-crs
+          linked-crs))
 
 (def ^:private position [Number])
 
