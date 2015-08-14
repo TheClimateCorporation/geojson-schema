@@ -16,17 +16,19 @@
     [schema.core :refer [Any optional-key required-key eq one pred both either maybe named conditional]]))
 
 (def ^:private named-crs
-  {:type (eq "name")
-   :properties {:name String
-                Any Any}
-   Any Any})
+  (named {:type (eq "name")
+          :properties {:name String
+                       Any Any}
+          Any Any}
+         "invalid named CRS"))
 
 (def ^:private linked-crs
-  {:type (eq "link")
-   :properties {:href String
-                (optional-key :type) String
-                Any Any}
-   Any Any})
+  (named {:type (eq "link")
+          :properties {:href String
+                       (optional-key :type) String
+                       Any Any}
+          Any Any}
+         "invalid linked CRS"))
 
 ;;TBD, there's a requirement that a CRS not be overridden on a sub object per the spec.
 ;; Not sure how to implement that yet.
