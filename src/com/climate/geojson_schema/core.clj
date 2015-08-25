@@ -13,13 +13,29 @@
 ;  limitations under the License.
 (ns com.climate.geojson-schema.core
   (:require
-    [schema.core :refer [Any optional-key required-key eq one pred both either maybe]]))
+    [schema.core :refer [Any optional-key required-key eq one pred both either maybe named conditional]]))
+
+(def ^:private named-crs
+  (named {:type (eq "name")
+          :properties {:name String
+                       Any Any}
+          Any Any}
+         "invalid named CRS"))
+
+(def ^:private linked-crs
+  (named {:type (eq "link")
+          :properties {:href String
+                       (optional-key :type) String
+                       Any Any}
+          Any Any}
+         "invalid linked CRS"))
 
 ;;TBD, there's a requirement that a CRS not be overridden on a sub object per the spec.
 ;; Not sure how to implement that yet.
 (def ^:private geojson-crs
-  {:type String
-   :properties (maybe {Any Any})})
+  (named (conditional #(= "name" (:type %)) named-crs
+                      #(= "link" (:type %)) linked-crs)
+         "CRSs should be either named CRSs or linked CRSs."))
 
 (def ^:private position [Number])
 
