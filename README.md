@@ -8,6 +8,9 @@
 
 A geojson schema for validating data using prismatic schema.
 
+GeoJSON is a format for encoding a variety of geographic data structures in JSON.
+The full full format specification is [available here](http://geojson.org/geojson-spec.html).
+
 ## Usage
 
 
