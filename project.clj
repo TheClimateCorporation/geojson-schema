@@ -12,7 +12,7 @@
 ;  See the License for the specific language governing permissions and
 ;  limitations under the License.
 
-(defproject com.climate/geojson-schema "0.1.1"
+(defproject com.climate/geojson-schema "0.1.2"
   :description "A Geojson validator using prismatic schema"
   :url "https://github.com/TheClimateCorporation/geojson-schema"
   :license {:name "Apache 2.0 License"
