@@ -16,6 +16,7 @@
   (:require [clojure.java.io :refer [resource file]]
             [cheshire.core :as json]
             [com.climate.geojson-schema.core :as geojson-schema]
+            [com.climate.geojson-schema.test.alter-data :refer :all]
             [schema.core :refer [validate]]
             [clojure.test :refer :all]))
 
@@ -36,18 +37,9 @@
 (deftest examples-are-valid-geojson
   (check-all-spec-examples #(validate geojson-schema/GeoJSON %)))
 
-(defn- add-crs-to-geojson
-  [geojson]
-  (assoc geojson :crs {:type "name"
-                       :properties {:name "urn:ogc:def:crs:OGC:1.3:CRS84"}}))
-
 (deftest supports-crs
   (testing "All examples are valid after adding crs"
     (check-all-spec-examples #(validate geojson-schema/GeoJSON (add-crs-to-geojson %)))))
-
-(defn- add-bbox-to-geojson
-  [geojson]
-  (assoc geojson :bbox [-180.0 200.0 100.10 1012.0]))
 
 (deftest supports-boundingbox
   (testing "All examples are valid after adding bbox"
