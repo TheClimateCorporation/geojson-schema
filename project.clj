@@ -19,5 +19,18 @@
             :url "http://opensource.org/licenses/Apache-2.0"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [prismatic/schema "0.4.3"]]
-  :profiles {:test {:dependencies [[cheshire "5.5.0"]]
-                    :resource-paths ["resources" "test-resources"]}})
+  :profiles {:test      {:dependencies   [[cheshire "5.5.0"]]
+                         :resource-paths ["resources" "test-resources"]}
+             :test-cljs {:plugins      [[lein-cljsbuild "1.1.0"]
+                                        [cheshire "5.5.0"]]
+                         :dependencies [[org.clojure/clojurescript "1.7.48"]]
+                         :hooks        [leiningen.cljsbuild]
+                         :cljsbuild    {:builds        {:test
+                                                        {:resource-paths ["test-resources" "test-resources/cljs"]
+                                                         :source-paths ["src" "test" "test-cljs"]
+                                                         :compiler     {:output-to     "test-resources/cljs/private/js/unit-test.js"
+                                                                        :optimizations :whitespace
+                                                                        :pretty-print  true}}}
+                                        :test-commands {:phantom ["phantomjs"
+                                                                  "test-resources/cljs/run-phantom.js"
+                                                                  "test-resources/cljs/private/html/unit-test.html"]}}}})
