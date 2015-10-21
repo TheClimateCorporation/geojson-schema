@@ -19,7 +19,7 @@
             :url "http://opensource.org/licenses/Apache-2.0"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [prismatic/schema "0.4.3"]]
-  :aliases {"cljs-test" ["with-profile" "test-cljs" "test"]}
+  :aliases {"cljs-test" ["with-profile" "test-cljs" "doo" "phantom" "once"]}
   :doo {:build "test"}
   :profiles {:test {:dependencies [[cheshire "5.5.0"]]
                     :resource-paths ["resources" "test-resources"]}
