@@ -19,8 +19,7 @@
             [cljs.test :refer-macros [deftest testing is]])
   (:require-macros [com.climate.geojson-schema.test.resources :refer [all-resources]]))
 
-;;All the data are slurped in to a var `data`
-(all-resources data)
+(def data (all-resources))
 
 (defn- check-all-spec-examples
   [test]
