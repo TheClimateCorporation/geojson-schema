@@ -13,19 +13,19 @@
 ;  limitations under the License.
 (ns com.climate.geojson-schema.core
   (:require
-    [schema.core :refer [Any optional-key required-key eq one pred both either maybe named conditional]]))
+    [schema.core :refer [Any optional-key required-key eq one pred both either maybe named conditional Str Num]]))
 
 (def ^:private named-crs
   (named {:type (eq "name")
-          :properties {:name String
+          :properties {:name Str
                        Any Any}
           Any Any}
          "invalid named CRS"))
 
 (def ^:private linked-crs
   (named {:type (eq "link")
-          :properties {:href String
-                       (optional-key :type) String
+          :properties {:href Str
+                       (optional-key :type) Str
                        Any Any}
           Any Any}
          "invalid linked CRS"))
@@ -37,11 +37,11 @@
                       #(= "link" (:type %)) linked-crs)
          "CRSs should be either named CRSs or linked CRSs."))
 
-(def ^:private position [Number])
+(def ^:private position [Num])
 
 (def ^:private geojson-base
   {(optional-key :crs) geojson-crs
-   (optional-key :bbox) [Number]})
+   (optional-key :bbox) [Num]})
 
 (def Point
   "For type \"Point\" the :coordinates member must be a single position.

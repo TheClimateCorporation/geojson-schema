@@ -50,6 +50,11 @@ A Coordiante Refference System can be specified, but the format is not verified 
 Similarly, the crs is supposed to only be defined on the base object and not any constituent 
 elements, but this is not enforced by the current schema.
 
+
+## Clojurescript
+
+Executing the tests for Clojurescript `lein with-profile test-cljs cljsbuild test`
+
 ## License
 
 Copyright (C) 2014 The Climate Corporation. Distributed under the Apache License, Version 2.0. You may not use this library except in compliance with the License. You may obtain a copy of the License at

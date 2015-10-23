@@ -1,4 +1,4 @@
-;  Copyright 2014 The Climate Corporation
+;  Copyright 2015 The Climate Corporation
 
 ;  Licensed under the Apache License, Version 2.0 (the "License");
 ;  you may not use this file except in compliance with the License.
@@ -12,27 +12,20 @@
 ;  See the License for the specific language governing permissions and
 ;  limitations under the License.
 
-(ns com.climate.geojson-schema.test.geojson
-  (:require [clojure.java.io :refer [resource file]]
-            [cheshire.core :as json]
-            [com.climate.geojson-schema.core :as geojson-schema]
-            [com.climate.geojson-schema.test.alter-data :refer :all]
+(ns com.climate.geojson-schema.test.geojson-cljs
+  (:require [com.climate.geojson-schema.core :as geojson-schema]
+            [com.climate.geojson-schema.test.alter-data :refer [add-crs-to-geojson add-bbox-to-geojson]]
             [schema.core :refer [validate]]
-            [clojure.test :refer :all]))
+            [cljs.test :refer-macros [deftest testing is]])
+  (:require-macros [com.climate.geojson-schema.test.resources :refer [all-resources]]))
 
-(def all-geojson-examples
-  "Returns a list of all paths of every geojson example"
-  (->> (resource "geojson_examples")
-       file
-       file-seq
-       (remove #(.isDirectory %))))
+(def data (all-resources))
 
 (defn- check-all-spec-examples
   [test]
-  (doseq [file-path all-geojson-examples]
-    (let [body (slurp file-path)
-          geojson (json/parse-string body true)]
-        (is (test geojson) (str file-path)))))
+  (doseq [k (keys data)
+          :let [geojson (get data k)]]
+    (is (test geojson) (str k))))
 
 (deftest examples-are-valid-geojson
   (check-all-spec-examples #(validate geojson-schema/GeoJSON %)))
@@ -46,28 +39,20 @@
     (check-all-spec-examples #(validate geojson-schema/GeoJSON
                                         (add-bbox-to-geojson %)))))
 
-(defn- load-example
-  "Loads resource located at path (in geojson_examples) and converts to map"
-  [path]
-  (-> (str "geojson_examples/" path)
-      resource
-      file
-      slurp
-      (json/parse-string  true)))
+(defn- load-example [path]
+  (get data path))
 
-(deftest line-strings
-  (deftest line-strings-schema
-    (is (validate geojson-schema/LineString (load-example "linestring.geojson"))))
+(deftest line-strings-schema
+  (is (validate geojson-schema/LineString (load-example "linestring.geojson"))))
 
-  (deftest linestring-need-two-coords
-    (is (thrown-with-msg? Exception
-                          #"Value does not match schema"
-                          (validate geojson-schema/LineString
-                                    {:type "LineString"
-                                     :coordinates [[101.0 1.0]]})))))
-
+(deftest linestring-need-two-coords
+  (is (thrown-with-msg? js/Error
+                        #"Value does not match schema"
+                        (validate geojson-schema/LineString
+                                  {:type        "LineString"
+                                   :coordinates [[101.0 1.0]]}))))
 (deftest linear-rings-schema
-  (let [linear-ring {:type "LineString"
+  (let [linear-ring {:type        "LineString"
                      :coordinates [[100.0 0.0]
                                    [101.0 1.0]
                                    [101.4 203.0]
@@ -77,24 +62,24 @@
         "Linear Rings should also be Line Strings")))
 
 (deftest linear-rings-are-closed
-  (let [not-closed-linear-ring {:type "LineString"
+  (let [not-closed-linear-ring {:type        "LineString"
                                 :coordinates [[100.0 0.0]
                                               [101.0 1.0]
                                               [101.4 203.0]
                                               [101.5 0.0]
                                               [103.0 401.0]]}]
-    (is (thrown-with-msg? Exception
+    (is (thrown-with-msg? js/Error
                           #"Value does not match schema"
                           (validate geojson-schema/LinearRing
                                     not-closed-linear-ring)))))
 
 (deftest linear-rings-have-area
   (testing "linear-rings which don't define an area"
-    (let [one-dimensional-line-segment {:type "LineString"
+    (let [one-dimensional-line-segment {:type        "LineString"
                                         :coordinates [[100.0 0.0]
                                                       [101.0 1.0]
                                                       [100.0 0.0]]}]
-      (is (thrown-with-msg? Exception
+      (is (thrown-with-msg? js/Error
                             #"Value does not match schema"
                             (validate geojson-schema/LinearRing
                                       one-dimensional-line-segment))))))
