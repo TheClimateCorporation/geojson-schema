@@ -46,9 +46,8 @@ The full full format specification is [available here](https://tools.ietf.org/ht
 
 ## Caveats
 
-A Coordiante Refference System can be specified, but the format is not verified by this schema.
-Similarly, the crs is supposed to only be defined on the base object and not any constituent 
-elements, but this is not enforced by the current schema.
+A Coordiante Reference System was supported in the previous 2008 version of the
+spec, but was removed in the 2016 verison. [More info here.](https://tools.ietf.org/html/rfc7946#section-4)
 
 
 ## Clojurescript
