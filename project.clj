@@ -29,6 +29,7 @@
                                         [cheshire "5.5.0"]
                                         [doo "0.1.6-SNAPSHOT"]]
                          :hooks [leiningen.cljsbuild]
+                         :resource-paths ["test-resources"]
                          :cljsbuild {:builds {:test {:resource-paths ["test-resources"]
                                                      :source-paths ["src" "test" "test-cljs"]
                                                      :compiler {:output-to "target/cljs/test-output.js"
