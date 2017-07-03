@@ -14,7 +14,7 @@
 
 (ns com.climate.geojson-schema.test.geojson-cljs
   (:require [com.climate.geojson-schema.core :as geojson-schema]
-            [com.climate.geojson-schema.test.alter-data :refer [add-crs-to-geojson add-bbox-to-geojson]]
+            [com.climate.geojson-schema.test.alter-data :as alter-data]
             [schema.core :refer [validate]]
             [cljs.test :refer-macros [deftest testing is]])
   (:require-macros [com.climate.geojson-schema.test.resources :refer [all-resources]]))
@@ -30,14 +30,10 @@
 (deftest examples-are-valid-geojson
   (check-all-spec-examples #(validate geojson-schema/GeoJSON %)))
 
-(deftest supports-crs
-  (testing "All examples are valid after adding crs"
-    (check-all-spec-examples #(validate geojson-schema/GeoJSON (add-crs-to-geojson %)))))
-
 (deftest supports-boundingbox
   (testing "All examples are valid after adding bbox"
     (check-all-spec-examples #(validate geojson-schema/GeoJSON
-                                        (add-bbox-to-geojson %)))))
+                                        (alter-data/add-bbox-to-geojson %)))))
 
 (defn- load-example [path]
   (get data path))

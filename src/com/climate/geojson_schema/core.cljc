@@ -13,40 +13,20 @@
 ;  limitations under the License.
 (ns com.climate.geojson-schema.core
   (:require
-    [schema.core :refer [Any optional-key required-key eq one pred both either maybe named conditional Str Num]]))
-
-(def ^:private named-crs
-  (named {:type (eq "name")
-          :properties {:name Str
-                       Any Any}
-          Any Any}
-         "invalid named CRS"))
-
-(def ^:private linked-crs
-  (named {:type (eq "link")
-          :properties {:href Str
-                       (optional-key :type) Str
-                       Any Any}
-          Any Any}
-         "invalid linked CRS"))
-
-;;TBD, there's a requirement that a CRS not be overridden on a sub object per the spec.
-;; Not sure how to implement that yet.
-(def ^:private geojson-crs
-  (named (conditional #(= "name" (:type %)) named-crs
-                      #(= "link" (:type %)) linked-crs)
-         "CRSs should be either named CRSs or linked CRSs."))
+    [schema.core :refer [Any optional-key required-key eq one pred both either maybe named conditional Str Num Keyword]]))
 
 (def ^:private position [Num])
 
 (def ^:private geojson-base
-  {(optional-key :crs) geojson-crs
-   (optional-key :bbox) [Num]})
+  {(optional-key :bbox) [Num]
+   ;; GeoJSON objects may contain foreign members
+   ;; https://tools.ietf.org/html/rfc7946#section-6.1
+   Keyword Any})
 
 (def Point
   "For type \"Point\" the :coordinates member must be a single position.
 
-  Cf. <http://geojson.org/geojson-spec.html#point>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.1.2>."
   (merge geojson-base
          {:coordinates position
           :type (eq "Point")}))
@@ -55,7 +35,7 @@
   "For type \"MultiPoint\", the :coordinates member must be an array of
   positions.
 
-  Cf. <http://geojson.org/geojson-spec.html#multipoint>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.1.3>."
   (merge geojson-base
          {:coordinates [position]
           :type (eq "MultiPoint")}))
@@ -69,7 +49,7 @@
   "For type \"LineString\", the :coordinates member must be an array of
   LineString coordinate arrays.
 
-  Cf. <http://geojson.org/geojson-spec.html#linestring>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.1.4>."
   (merge geojson-base
          {:coordinates linear-string-coordinates
           :type (eq "LineString")}))
@@ -117,7 +97,7 @@
   "For type \"MultiLineString\", the :coordinates member must be an array of
   LineString coordinate arrays.
 
-  Cf. <http://geojson.org/geojson-spec.html#multilinestring>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.1.5>."
   (merge geojson-base
          {:coordinates [linear-string-coordinates]
           :type (eq "MultiLineString")}))
@@ -130,7 +110,7 @@
   coordinate arrays. For Polygons with multiple rings, the first must be the
   exterior ring and any others must be interior rings or holes.
 
-  Cf. <http://geojson.org/geojson-spec.html#polygon>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.1.6>."
   (merge geojson-base
          {:coordinates polygon-coords
           :type (eq "Polygon")}))
@@ -139,7 +119,7 @@
   "For type \"MultiPolygon\", the :coordinates member must be an array of
   Polygon coordinate arrays.
 
-  Cf. <http://geojson.org/geojson-spec.html#multipolygon>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.1.7>."
   (merge geojson-base
          {:coordinates [polygon-coords]
           :type (eq "MultiPolygon")}))
@@ -156,7 +136,7 @@
 
   This Geometry schema is everything excluding GeometryCollection.
 
-  Cf. <http://geojson.org/geojson-spec.html#geometry-objects>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.1>."
   (either Point
           MultiPoint
           LineString
@@ -174,7 +154,7 @@
 
   A GeometryCollection should not include other GeometryCollections.
 
-  Cf. <http://geojson.org/geojson-spec.html#geometry-collection>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.1.8>."
   (merge geojson-base
          {:geometries [Geometry]
           :type (eq "GeometryCollection")}))
@@ -192,12 +172,12 @@
   - If a feature has a commonly used identifier, that identifier should be
     included as a member of the feature object with the name \"id\".
 
-  Cf. <http://geojson.org/geojson-spec.html#feature-objects>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.2>."
   (merge geojson-base
          {:geometry Geometry
           :type (eq "Feature")
           :properties (maybe Any)
-          (optional-key :id) (maybe Any)}))
+          (optional-key :id) (either Str Num)}))
 
 (def FeatureCollection
   "A GeoJSON object with the type \"FeatureCollection\" is a feature collection
@@ -207,7 +187,7 @@
   \"features\". The value corresponding to \"features\" is an array. Each
   element in the array is a feature object as defined above.
 
-  Cf. <http://geojson.org/geojson-spec.html#feature-collection-objects>."
+  Cf. <https://tools.ietf.org/html/rfc7946#section-3.3>."
   (merge geojson-base
          {:features [Feature]
           :type (eq "FeatureCollection")}))
@@ -215,7 +195,7 @@
 (def GeoJSON
   "This is any valid GeoJSON object.
 
-  Cf. <http://geojson.org/geojson-spec.html>."
+  Cf. <https://tools.ietf.org/html/rfc7946>."
   (either Geometry
           GeometryCollection
           Feature
