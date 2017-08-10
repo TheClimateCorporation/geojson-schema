@@ -1,4 +1,4 @@
-;  Copyright 2014 The Climate Corporation
+;  Copyright 2017 The Climate Corporation
 
 ;  Licensed under the Apache License, Version 2.0 (the "License");
 ;  you may not use this file except in compliance with the License.
@@ -12,13 +12,14 @@
 ;  See the License for the specific language governing permissions and
 ;  limitations under the License.
 
-(defproject com.climate/geojson-schema "0.1.3"
+(defproject com.climate/geojson-schema "0.2.0-SNAPSHOT"
   :description "A Geojson validator using prismatic schema"
   :url "https://github.com/TheClimateCorporation/geojson-schema"
   :license {:name "Apache 2.0 License"
             :url "http://opensource.org/licenses/Apache-2.0"}
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [prismatic/schema "1.1.6"]]
+  :deploy-repositories  [["releases" :clojars]]
   :aliases {"cljs-test" ["with-profile" "test-cljs" "doo" "phantom" "once"]}
   :doo {:build "test"}
   :profiles {:test {:dependencies [[cheshire "5.5.0"]]
